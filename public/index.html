@@ -21,8 +21,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/kivo-icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="home.css?v=20261113-3">
-  <link rel="stylesheet" href="recraft.css?v=20261127-7">
-  <script src="app.js?v=20261127-7" defer></script>
+  <link rel="stylesheet" href="recraft.css?v=20261127-8">
+  <script src="app.js?v=20261127-8" defer></script>
 </head>
 <body class="kivo-home editorial-home">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -49,9 +49,14 @@
         <p class="capture-note">Free to join · 20% off your first 6 months · <a href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">or book a demo</a></p>
       </div>
       <div class="stage-media">
-        <div class="stage-slab">
-          <img class="stage-screen" src="assets/product/dashboard.webp" alt="Kivo dashboard for Meridian Bank: tickets opened, jobs done on time, average time to seen, tickets that need attention" width="1800" height="962" fetchpriority="high" decoding="async">
-          <img class="stage-phone" src="assets/product/phone-request.webp" alt="A requester's phone showing request WT-0152: seen by the facility team, assigned to Tunde, being fixed" width="585" height="1266" decoding="async">
+        <div class="stage-slab" id="stage-slab" data-front="rest">
+          <figure class="stage-window" data-layer="screen" tabindex="0" aria-label="Kivo dashboard on desktop. Hover or focus to bring it forward.">
+            <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>app.kivo.africa</span></div>
+            <img src="assets/product/dashboard.webp" alt="Kivo dashboard for Meridian Bank: tickets opened, jobs done on time, average time to seen, needs attention, contractor scorecards and backlog by site" width="1800" height="1381" fetchpriority="high" decoding="async">
+          </figure>
+          <figure class="stage-device" data-layer="phone" tabindex="0" aria-label="Kivo on a requester's phone. Hover or focus to bring it forward.">
+            <img src="assets/product/phone-request.webp" alt="Kemi's phone showing request WT-0152 with her photo of the burnt socket: seen by the facility team, assigned to Tunde, being fixed" width="585" height="1266" decoding="async">
+          </figure>
         </div>
       </div>
     </div>
@@ -77,8 +82,8 @@
       </div>
       <article class="chapter">
         <div class="chapter-media chapter-phones">
-          <img src="assets/product/phone-request.webp" alt="Requester view of WT-0152 with each step ticked: sent, seen, assigned, being fixed" width="585" height="1266" loading="lazy" decoding="async">
-          <img src="assets/product/phone-tech.webp" alt="Technician view of the same job with the asset, who assigned it, the due time and a Start job button" width="585" height="1266" loading="lazy" decoding="async">
+          <figure class="device"><img src="assets/product/phone-request.webp" alt="Requester view of WT-0152 with her photo and each step ticked: sent, seen, assigned, being fixed" width="585" height="1266" loading="lazy" decoding="async"></figure>
+          <figure class="device"><img src="assets/product/phone-tech.webp" alt="Technician view of the same job with Kemi’s photo of the burnt socket, the asset, who assigned it, the due time and a Start job button" width="585" height="1266" loading="lazy" decoding="async"></figure>
         </div>
         <div class="chapter-copy">
           <p class="chapter-label">01 · Report and fix</p>
@@ -89,7 +94,7 @@
       </article>
       <article class="chapter chapter-flip">
         <div class="chapter-media chapter-screen">
-          <img src="assets/product/supplier-bill.webp" alt="Kivo stopping a supplier bill: Okon billed 2 drums of engine oil and only 1 arrived, ₦48,000 more than delivered" width="1600" height="806" loading="lazy" decoding="async">
+          <figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>app.kivo.africa</span></div><img src="assets/product/supplier-bill.webp" alt="Kivo stopping a supplier bill: Okon billed 2 drums of engine oil and only 1 arrived, ₦48,000 more than delivered. Each line checked against the LPO and waybill." width="1800" height="1125" loading="lazy" decoding="async"></figure>
         </div>
         <div class="chapter-copy">
           <p class="chapter-label">02 · Settle</p>
@@ -100,12 +105,12 @@
       </article>
       <article class="chapter">
         <div class="chapter-media chapter-screen">
-          <img src="assets/product/dashboard-scorecard.webp" alt="Contractor scorecards out of 100 and the open backlog for each Meridian Bank site" width="1400" height="332" loading="lazy" decoding="async">
+          <figure class="window"><div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>app.kivo.africa</span></div><img src="assets/product/contractor-scorecard.webp" alt="Bayo Electrical’s contractor scorecard: 92 out of 100 across quality, speed, cost and communication, with recent jobs and ratings" width="1800" height="1125" loading="lazy" decoding="async"></figure>
         </div>
         <div class="chapter-copy">
           <p class="chapter-label">03 · Oversee</p>
-          <h3>Every site and contractor, side by side.</h3>
-          <p>See which branch has the longest backlog and which contractor fixes it first time. Head office gets the whole portfolio; each site manager sees their own.</p>
+          <h3>Know which contractor to call first.</h3>
+          <p>Every contractor gets a score out of 100 from real jobs: quality, speed, cost and how well they keep you updated. Head office sees the whole portfolio; each site manager sees their own.</p>
           <a class="chapter-link" href="#pricing">See plans for multi-site teams<svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg></a>
         </div>
       </article>

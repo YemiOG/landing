@@ -464,3 +464,19 @@ if (joinForm && joinDialog) {
   });
   setStep(1);
 }
+
+
+/* ---------- Hero: bring the dashboard or the phone to the front ---------- */
+const stageSlab = document.getElementById('stage-slab');
+if (stageSlab) {
+  const layers = Array.from(stageSlab.querySelectorAll('[data-layer]'));
+  const setFront = (value) => { stageSlab.dataset.front = value; };
+  for (const layer of layers) {
+    layer.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') setFront(layer.dataset.layer); });
+    layer.addEventListener('focus', () => { if (layer.matches(':focus-visible')) setFront(layer.dataset.layer); });
+    layer.addEventListener('pointerup', event => { if (event.pointerType !== 'mouse') setFront(stageSlab.dataset.front === layer.dataset.layer ? 'rest' : layer.dataset.layer); });
+    layer.addEventListener('keydown', event => { if (event.key === 'Escape') { setFront('rest'); layer.blur(); } });
+  }
+  stageSlab.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse' && !stageSlab.contains(document.activeElement)) setFront('rest'); });
+  stageSlab.addEventListener('focusout', event => { if (!stageSlab.contains(event.relatedTarget)) setFront('rest'); });
+}
