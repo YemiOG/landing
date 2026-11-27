@@ -579,3 +579,94 @@
   .situation-list a { padding-block: 15px; }
   .handover-photo img { aspect-ratio: 4 / 3; }
 }
+
+/* ===== 27 Nov 2026 · FM launch site: six plans, Meridian tour, WhatsApp ===== */
+.nav-demo{color:var(--on-dark)}
+.wide-break{display:inline}
+.catalogue-sample small{font-size:.45em;letter-spacing:0;font-weight:400;color:var(--muted);margin-left:.3em}
+
+/* Pricing: six plans */
+.plan-tabs{flex-wrap:wrap;column-gap:28px;row-gap:0}
+.plan-tabs button{white-space:nowrap}
+.price-tiers{list-style:none;margin:16px 0 0;padding:0;border-top:1px solid var(--line);max-width:380px}
+.price-tiers li{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.price-tiers strong{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.price-actions{display:flex;align-items:center;gap:24px;margin-top:28px;flex-wrap:wrap}
+.estimate-lines small{display:block;color:var(--muted);font-size:12px;margin-top:4px;font-weight:400}
+.estimate-lines strong{font-variant-numeric:tabular-nums}
+#city-body{margin-top:18px}
+.city-copy{font-size:14px;line-height:1.6;color:var(--muted);max-width:420px}
+.city-from{display:flex;align-items:baseline;gap:10px;margin:22px 0;flex-wrap:wrap}
+.city-from strong{font-family:var(--display);font-size:clamp(34px,4vw,46px);font-weight:500;letter-spacing:-.04em}
+.city-from span{font-size:13px;color:var(--muted)}
+button.editorial-link{background:none;border:0;padding:0;cursor:pointer;font:inherit}
+.price-tiers-head{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:18px 0 -8px}
+
+.plan-glance{margin-top:72px}
+.plan-glance h3{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.02em;margin:0 0 18px}
+.glance-scroll{overflow-x:auto;border-top:2px solid var(--navy)}
+.glance-scroll:focus-visible{outline:2px solid var(--orange);outline-offset:4px}
+.plan-glance table{width:100%;min-width:760px;border-collapse:collapse;font-size:14px}
+.plan-glance th,.plan-glance td{text-align:left;padding:15px 18px 15px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.plan-glance thead th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding-block:12px}
+.plan-glance tbody th{font-weight:600;color:var(--ink);white-space:nowrap}
+.plan-glance td{color:var(--muted)}
+.plan-glance td:nth-child(3){color:var(--ink);font-variant-numeric:tabular-nums}
+.glance-note{font-size:12px;line-height:1.6;color:var(--muted);margin-top:16px;max-width:820px}
+
+/* Coming next */
+.next-section{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:56px;padding-block:72px;border-top:1px solid var(--line)}
+.next-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--orange-ink);font-weight:600;margin:0 0 12px}
+.next-section h2{font-family:var(--display);font-size:clamp(30px,3.4vw,44px);font-weight:500;letter-spacing:-.035em;line-height:1.05;margin:0}
+.next-section p{color:var(--muted);line-height:1.65;margin:0 0 18px;max-width:560px}
+
+/* Tour */
+.records-warning dd{color:#873400}
+.bill-records>div:nth-last-child(2){border-bottom:2px solid var(--navy)}
+.bill-records>div:nth-last-child(2) dd,.bill-records>div:nth-last-child(2) dt{color:var(--ink);font-weight:600}
+.bill-records>div:last-child dd{color:var(--orange-ink);font-weight:600}
+.bill-records dd{font-variant-numeric:tabular-nums}
+
+/* WhatsApp: generic chat glyph, labelled */
+.wa-icon{width:20px;height:20px;flex:none;display:block}
+.wa-link{display:inline-flex;align-items:center;gap:8px}
+.wa-float{position:fixed;right:20px;bottom:20px;z-index:30;display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 18px 0 15px;border-radius:999px;background:#fff;color:var(--navy);border:1px solid var(--line);font-size:14px;font-weight:600;text-decoration:none;box-shadow:0 10px 30px rgb(2 35 58 / .22)}
+.wa-float:hover{border-color:var(--navy)}
+.wa-float:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.wa-float .wa-icon{width:24px;height:24px}
+.dialog-actions{display:grid;gap:10px}
+.dialog-intro{color:var(--muted);line-height:1.6}
+
+@media (max-width:980px){
+  .next-section{grid-template-columns:1fr;gap:20px}
+}
+@media (max-width:620px){
+  .wide-break{display:none}
+  .plan-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;column-gap:22px;margin-inline:-18px;padding-inline:18px}
+  .plan-tabs::-webkit-scrollbar{display:none}
+  .plan-glance{margin-top:52px}
+  .wa-float{right:14px;bottom:84px;padding:0 14px}
+  .wa-float span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .next-section{padding-block:52px}
+}
+@media print{.wa-float{display:none}}
+
+/* Early access form → kivoafrica.com/api/leads */
+.join-form{display:grid;gap:14px;margin-top:24px}
+.join-field{display:grid;gap:6px;min-width:0}
+.join-field label{font-size:12px;font-weight:600;color:var(--ink)}
+.join-field input,.join-field select{width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);font:inherit;font-size:15px}
+.join-field input::placeholder{color:#8a9aa6}
+.join-field input:focus-visible,.join-field select:focus-visible{outline:2px solid var(--orange);outline-offset:1px;border-color:var(--navy)}
+.join-field input[aria-invalid=true]{border-color:#b3261e}
+.join-row{display:grid;grid-template-columns:1fr 1.4fr;gap:12px}
+.join-error{margin:0;padding:10px 12px;border-left:3px solid #b3261e;background:#fdecea;color:#8c1d18;font-size:13px}
+.join-submit{width:100%;margin-top:4px}
+.join-submit[aria-busy=true]{opacity:.7;cursor:progress}
+.join-alt{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:16px;font-size:13px;flex-wrap:wrap}
+.join-alt a{display:inline-flex;align-items:center;gap:6px;min-height:44px;text-decoration:underline;text-underline-offset:4px}
+.join-alt span{color:var(--muted)}
+.join-done:focus{outline:none}
+@media (max-width:620px){.join-row{grid-template-columns:1fr}.dialog h2{margin:14px 0}}
+
+.join-trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}

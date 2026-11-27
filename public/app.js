@@ -1,177 +1,313 @@
 'use strict';
 
-let currentPlan = 'estates';
-let billingPeriod = 'monthly';
-const $=(selector)=>document.querySelector(selector);
-const $$=(selector)=>Array.from(document.querySelectorAll(selector));
-const naira=(value)=>new Intl.NumberFormat('en-NG',{style:'currency',currency:'NGN',maximumFractionDigits:0}).format(value);
-$$('[data-close]').forEach(button=>button.addEventListener('click',()=>button.closest('dialog').close()));
-$$('dialog').forEach(dialog=>dialog.addEventListener('click',event=>{if(event.target===dialog){const box=dialog.getBoundingClientRect();if(event.clientX<box.left||event.clientX>box.right||event.clientY<box.top||event.clientY>box.bottom)dialog.close();}}));
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+const naira = (value) => new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', maximumFractionDigits: 0 }).format(Math.round(value));
+
+/* ---------- Dialogs ---------- */
+$$('[data-close]').forEach(button => button.addEventListener('click', () => button.closest('dialog').close()));
+$$('dialog').forEach(dialog => dialog.addEventListener('click', event => {
+  if (event.target !== dialog) return;
+  const box = dialog.getBoundingClientRect();
+  if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
+}));
 // Keep keyboard focus cycling inside the dialog, including in embedded browsers.
-$$('dialog').forEach(dialog=>dialog.addEventListener('keydown',event=>{
-  if(event.key!=='Tab')return;
-  const focusable=Array.from(dialog.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')).filter(element=>element.getClientRects().length>0);
-  const first=focusable[0],last=focusable[focusable.length-1];
-  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
-  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+$$('dialog').forEach(dialog => dialog.addEventListener('keydown', event => {
+  if (event.key !== 'Tab') return;
+  const focusable = Array.from(dialog.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex="0"]')).filter(element => element.getClientRects().length > 0);
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 }));
 
-function setupTabKeyboard(selector,onSelect,vertical=false){
-  const buttons=$$(selector);
-  buttons.forEach(button=>button.addEventListener('keydown',event=>{
-    const prev=vertical?'ArrowUp':'ArrowLeft';const next=vertical?'ArrowDown':'ArrowRight';
-    if(![prev,next,'Home','End','ArrowLeft','ArrowRight'].includes(event.key))return;
-    event.preventDefault();const index=buttons.indexOf(button);
-    const target=event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+([prev,'ArrowLeft'].includes(event.key)?-1:1)+buttons.length)%buttons.length;
-    onSelect(buttons[target]);buttons[target].focus();
+function setupTabKeyboard(selector, onSelect, vertical = false) {
+  const buttons = $$(selector);
+  buttons.forEach(button => button.addEventListener('keydown', event => {
+    const prev = vertical ? 'ArrowUp' : 'ArrowLeft';
+    const next = vertical ? 'ArrowDown' : 'ArrowRight';
+    if (![prev, next, 'Home', 'End', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    const index = buttons.indexOf(button);
+    const target = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + ([prev, 'ArrowLeft'].includes(event.key) ? -1 : 1) + buttons.length) % buttons.length;
+    onSelect(buttons[target]);
+    buttons[target].focus();
   }));
 }
-const planData={
-  estates:{rate:2000,unit:'unit',plural:'units',defaultQuantity:40,context:'For estates, gated communities and multi-unit developments.',question:'How many units do you manage?',features:['Residents report and track issues free','Ticket dispatch and work orders','Contractor directory and site hierarchy','Branded purchase orders and service billing']},
-  business:{rate:15000,unit:'user',plural:'users',defaultQuantity:5,context:'For developers, contractors, facilities firms, offices, hotels, hospitals and schools.',question:'How many people manage the work?',features:['Staff and occupants report issues free','Full asset register and service histories','Contractors, purchase orders and invoices','Role-based permissions and audit trail']},
-};
-function updateEstimate(){
-  const value=Number($('#quantity').value);
-  const valid=$('#quantity').value!==''&&Number.isInteger(value)&&value>=1&&value<=10000;
-  $('#quantity').setAttribute('aria-invalid',String(!valid));
-  $('#quantity-help').textContent=valid?'Enter 1–10,000 to estimate. Larger portfolio? Talk to us.':'Please enter a whole number between 1 and 10,000.';
-  if(!valid){$('#base-total').textContent='—';$('#discount-total').textContent='—';return;}
-  const total=value*planData[currentPlan].rate;
-  $('#base-total').textContent=naira(total * (billingPeriod === 'annual' ? 12 : 1));
-  $('#discount-total').innerHTML=`${naira(total*.8)}<span>/mo</span>`;
-  $('#decrease').disabled=value===1;$('#increase').disabled=value===10000;
-}
-function changePlan(plan){
-  currentPlan=plan;const data=planData[plan];
-  $$('[data-plan]').forEach(button=>{const selected=button.dataset.plan===plan;button.setAttribute('aria-selected',String(selected));button.tabIndex=selected?0:-1;});
-  $('#price-panel').setAttribute('aria-labelledby',plan==='estates'?'price-estates':'price-business');
-  $('#price-context').textContent=data.context;
-  $('#price-features').innerHTML=data.features.map(feature=>`<li>${feature}</li>`).join('');
-  $('#quantity-label').textContent=data.question;$('#quantity-unit').textContent=data.plural;$('#quantity').value=data.defaultQuantity;updateBilling();
-}
-$$('[data-plan]').forEach(button=>button.addEventListener('click',()=>changePlan(button.dataset.plan)));
-setupTabKeyboard('[data-plan]',button=>changePlan(button.dataset.plan));
-$('#quantity').addEventListener('input',updateEstimate);
-for(const [id,delta] of [['decrease',-1],['increase',1]])$(`#${id}`).addEventListener('click',()=>{const value=Number($('#quantity').value);$('#quantity').value=Math.min(10000,Math.max(1,(Number.isFinite(value)?Math.trunc(value):1)+delta));updateEstimate();});
 
-const menu=$('.menu-button');
-function closeMenu(){menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Open navigation');$('#nav-links').classList.remove('is-open');}
-menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')==='true';menu.setAttribute('aria-expanded',String(!open));menu.setAttribute('aria-label',open?'Open navigation':'Close navigation');$('#nav-links').classList.toggle('is-open',!open);});
-$$('#nav-links a').forEach(link=>link.addEventListener('click',closeMenu));
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&menu.getAttribute('aria-expanded')==='true'){closeMenu();menu.focus();}});
-document.addEventListener('click',event=>{if(!event.target.closest('.nav'))closeMenu();});
+/* ---------- Navigation ---------- */
+const menu = $('.menu-button');
+function closeMenu() { menu.setAttribute('aria-expanded', 'false'); menu.setAttribute('aria-label', 'Open navigation'); $('#nav-links').classList.remove('is-open'); }
+menu.addEventListener('click', () => {
+  const open = menu.getAttribute('aria-expanded') === 'true';
+  menu.setAttribute('aria-expanded', String(!open));
+  menu.setAttribute('aria-label', open ? 'Open navigation' : 'Close navigation');
+  $('#nav-links').classList.toggle('is-open', !open);
+});
+$$('#nav-links a').forEach(link => link.addEventListener('click', closeMenu));
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && menu.getAttribute('aria-expanded') === 'true') { closeMenu(); menu.focus(); } });
+document.addEventListener('click', event => { if (!event.target.closest('.nav')) closeMenu(); });
 document.addEventListener('click', event => {
   if (!event.target.closest('[data-join]')) return;
   closeMenu();
   $('#join-dialog').showModal();
 });
-if (new URLSearchParams(window.location.search).get('join') === '1') {
-  $('#join-dialog').showModal();
-}
-updateEstimate();
+if (new URLSearchParams(window.location.search).get('join') === '1') $('#join-dialog').showModal();
 
-function updateBilling() {
-  const plan = planData[currentPlan];
-  const annual = billingPeriod === 'annual';
-  $('#unit-price').textContent = naira(plan.rate * (annual ? 12 : 1));
-  $('#price-unit').textContent = ` / ${plan.unit} / ${annual ? 'year' : 'month'}`;
-  $('#monthly-equivalent').hidden = !annual;
-  $('#monthly-equivalent').textContent = `Equivalent to ${naira(plan.rate)} per ${plan.unit} per month. Annual pricing is 12 monthly payments combined.`;
-  $('#estimate-period').textContent = `Expected ${annual ? 'annual' : 'monthly'} total, from`;
-  for (const button of $$('[data-billing]')) {
-    button.setAttribute('aria-pressed', String(button.dataset.billing === billingPeriod));
+/* ---------- Pricing ---------- */
+// Agreed price list, 23 November 2026. Monthly rates in naira, before VAT.
+const FOUNDING = { label: 'As a founding member', detail: '20% off your first 6 months · sign by 31 March 2027', factor: 0.8 };
+const PILOT = { label: '60-day pilot', detail: 'Half price for 60 days, credited to your first annual invoice', factor: 0.5 };
+const plans = {
+  business: {
+    context: 'For offices, schools, hospitals and single-site businesses with an in-house team.',
+    rate: 15000, unit: 'paid user', plural: 'paid users', minimum: 75000, quantity: 8,
+    question: 'How many technicians, storekeepers and admins use Kivo?',
+    features: ['Staff report issues free, with photos and offline', 'Technician app with parts from the store', 'Contractor links, LPOs, waybills and bill matching', 'Approvals, budgets and live reports'],
+    offer: FOUNDING,
+  },
+  estates: {
+    context: 'For gated estates, residential developers and multi-unit blocks.',
+    rate: 2000, unit: 'unit', plural: 'units', minimum: 100000, quantity: 150,
+    question: 'How many units do you manage?',
+    features: ['Residents report and track issues free', 'Your team and any number of staff', 'Contractors, diesel and generator logs', 'Service charge items on client bills'],
+    offer: FOUNDING,
+  },
+  hotels: {
+    context: 'For hotels and serviced apartments. Housekeeping and engineering staff are included.',
+    rate: 1500, unit: 'room', plural: 'rooms', minimum: 150000, quantity: 120,
+    question: 'How many rooms does the property have?',
+    features: ['Any number of staff, no seat counting', 'Room and area faults logged in seconds', 'Stores, diesel and contractor jobs', 'Asset service history for every room'],
+    offer: FOUNDING,
+  },
+  multisite: {
+    context: 'For banks, telecoms, fuel stations and retail chains. Every branch manager, custodian and contractor is included.',
+    tiers: [[50, 25000], [200, 18000], [Infinity, 12000]], unit: 'site', plural: 'sites', minQuantity: 10, quantity: 40,
+    question: 'How many branches or sites?',
+    features: ['Unlimited users at every site', 'Branch, region and head-office views', 'One contractor and supplier list across sites', 'Bill matching and audit trail for procurement'],
+    offer: PILOT, setup: true,
+  },
+  fm: {
+    context: 'For facility management companies. Your clients get their own portal free.',
+    tiers: [[25, 15000], [100, 12000], [Infinity, 9000]], unit: 'technician', plural: 'technicians', minimum: 250000, quantity: 30,
+    question: 'How many technicians do you field?',
+    features: ['Free client portals with a live job record', 'Your markup per client, fixed-fee workmanship', 'Client bills with VAT and withholding tax', 'Contractors and suppliers across every client'],
+    offer: PILOT, setup: true,
+  },
+  city: {
+    context: 'For master-planned developments with homes, office towers and shared infrastructure.',
+    custom: true, minimum: 1500000,
+    features: ['Homes, towers and common areas in one workspace', 'Resident and tenant portals', 'Utilities, diesel and estate-wide contractors', 'Dedicated onboarding team'],
+    setup: true,
+  },
+};
+let currentPlan = 'business';
+let billingPeriod = 'monthly';
+const ordinal = (n) => n === Infinity ? 'and above' : `up to ${n}`;
+
+function tieredTotal(plan, quantity) {
+  if (!plan.tiers) return quantity * plan.rate;
+  let remaining = quantity, from = 0, total = 0;
+  for (const [upTo, rate] of plan.tiers) {
+    const inTier = Math.min(remaining, upTo - from);
+    if (inTier <= 0) break;
+    total += inTier * rate; remaining -= inTier; from = upTo;
   }
+  return total;
+}
+function monthlyCharge(plan, quantity) {
+  const billedQuantity = plan.minQuantity ? Math.max(quantity, plan.minQuantity) : quantity;
+  const usage = tieredTotal(plan, billedQuantity);
+  const minimum = plan.minimum || 0;
+  return { total: Math.max(usage, minimum), minimumApplied: usage < minimum || (plan.minQuantity && quantity < plan.minQuantity) };
+}
+
+function renderPlan() {
+  const plan = plans[currentPlan];
+  const yearly = billingPeriod === 'annual';
+  $$('[data-plan]').forEach(button => {
+    const selected = button.dataset.plan === currentPlan;
+    button.setAttribute('aria-selected', String(selected));
+    button.tabIndex = selected ? 0 : -1;
+  });
+  $('#price-panel').setAttribute('aria-labelledby', `price-${currentPlan}`);
+  $('#price-context').textContent = plan.context;
+  $('#price-features').innerHTML = plan.features.map(feature => `<li>${feature}</li>`).join('');
+
+  const tiers = $('#price-tiers');
+  if (plan.custom) {
+    $('#price-from').textContent = 'CUSTOM PRICING · FROM';
+    $('#unit-price').textContent = naira(plan.minimum);
+    $('#price-unit').textContent = ' / month';
+    tiers.hidden = true;
+    $('#price-minimum').textContent = 'Priced on homes, buildings and a platform fee for the shared estate.';
+  } else {
+    const firstRate = plan.tiers ? plan.tiers[0][1] : plan.rate;
+    const shown = yearly ? firstRate * 10 : firstRate;
+    $('#price-from').textContent = 'FROM';
+    $('#unit-price').textContent = naira(shown);
+    $('#price-unit').textContent = ` / ${plan.unit} / ${yearly ? 'year' : 'month'}`;
+    tiers.hidden = !plan.tiers;
+    if (plan.tiers) {
+      let from = 1;
+      tiers.innerHTML = plan.tiers.map(([upTo, rate]) => {
+        const label = upTo === Infinity ? `Above ${from - 1}` : `${from}–${upTo}`;
+        from = upTo + 1;
+        return `<li><span>${label} ${plan.plural}</span><strong>${naira(rate)} a month</strong></li>`;
+      }).join('');
+    }
+    const minimumText = plan.minQuantity ? `Minimum ${plan.minQuantity} ${plan.plural}` : `Minimum ${naira(plan.minimum)} a month`;
+    $('#price-minimum').textContent = yearly ? `${minimumText}. Yearly: 12 months for the price of 10.` : minimumText;
+  }
+
+  $('#estimate-title').textContent = plan.custom ? 'How City pricing works' : 'Estimate your costs';
+  $('#estimate-body').hidden = Boolean(plan.custom);
+  $('#city-body').hidden = !plan.custom;
+  $('#estimate-note').textContent = plan.setup
+    ? 'Before VAT at 7.5%. Includes a one-off setup fee of ₦500,000 to ₦5,000,000 for data import, training and site visits, quoted after a site survey.'
+    : 'Before VAT at 7.5%. Corporate clients can deduct 5% withholding tax; send us the credit note.';
+  if (!plan.custom) {
+    $('#quantity-label').textContent = plan.question;
+    $('#quantity-unit').textContent = plan.plural;
+  }
+  for (const button of $$('[data-billing]')) button.setAttribute('aria-pressed', String(button.dataset.billing === billingPeriod));
   updateEstimate();
 }
 
-for (const button of $$('[data-billing]')) {
-  button.addEventListener('click', () => {
-    billingPeriod = button.dataset.billing;
-    updateBilling();
-  });
+function updateEstimate() {
+  const plan = plans[currentPlan];
+  if (plan.custom) return;
+  const input = $('#quantity');
+  const value = Number(input.value);
+  const valid = input.value !== '' && Number.isInteger(value) && value >= 1 && value <= 10000;
+  input.setAttribute('aria-invalid', String(!valid));
+  $('#decrease').disabled = valid && value === 1;
+  $('#increase').disabled = valid && value === 10000;
+  if (!valid) {
+    $('#quantity-help').textContent = 'Please enter a whole number between 1 and 10,000.';
+    $('#base-total').textContent = '—'; $('#discount-total').textContent = '—';
+    return;
+  }
+  const { total, minimumApplied } = monthlyCharge(plan, value);
+  const yearly = billingPeriod === 'annual';
+  $('#quantity-help').textContent = minimumApplied
+    ? `Below the plan minimum, so the minimum applies.`
+    : 'Enter 1–10,000. Larger portfolio? Talk to us.';
+  $('#estimate-period').innerHTML = yearly
+    ? `Yearly, before VAT<small>Works out to ${naira(total * 10 / 12)} a month</small>`
+    : 'Monthly, before VAT';
+  $('#base-total').textContent = naira(yearly ? total * 10 : total);
+  const offer = plan.offer;
+  $('#offer-line').hidden = !offer;
+  if (offer) {
+    $('#offer-label').firstChild.textContent = offer.label;
+    $('#offer-detail').textContent = offer.detail;
+    $('#discount-total').innerHTML = `${naira(total * offer.factor)}<span>/mo</span>`;
+  }
 }
 
-const palmviewSteps = [
+function changePlan(planKey) {
+  currentPlan = planKey;
+  const plan = plans[planKey];
+  if (!plan.custom) $('#quantity').value = plan.quantity;
+  renderPlan();
+}
+$$('[data-plan]').forEach(button => button.addEventListener('click', () => changePlan(button.dataset.plan)));
+setupTabKeyboard('[data-plan]', button => changePlan(button.dataset.plan));
+$$('[data-billing]').forEach(button => button.addEventListener('click', () => { billingPeriod = button.dataset.billing; renderPlan(); }));
+$('#quantity').addEventListener('input', updateEstimate);
+for (const [id, delta] of [['decrease', -1], ['increase', 1]]) {
+  $(`#${id}`).addEventListener('click', () => {
+    const value = Number($('#quantity').value);
+    $('#quantity').value = Math.min(10000, Math.max(1, (Number.isFinite(value) ? Math.trunc(value) : 1) + delta));
+    updateEstimate();
+  });
+}
+changePlan('business');
+
+/* ---------- Product tour: one job at Meridian Bank ---------- */
+// Figures: parts at cost ₦16,600, 15% markup for this client, fixed-fee workmanship ₦15,000.
+const tourState = { assigned: false, confirmed: false, fixed: false };
+const steps = [
   {
-    phase: 'Build', title: 'Project budget', caption: 'See where the money is going across the 12-home project.',
-    rows: [['Project budget', naira(480000000)], ['Spent to date', naira(186400000)], ['Budget remaining', naira(293600000)]],
-    note: 'Palmview Terrace · 12 terrace homes · Lekki, Lagos',
-    meter: true,
+    phase: 'Report', title: 'Sockets sparking, staff canteen',
+    caption: 'Kemi reports the fault from her phone with a photo. Reporting is free for staff.',
+    rows: [['Request', 'WT-0152'], ['Location', 'Head Office › Floor 1 › Canteen'], ['Reported by', 'Kemi Adeyemi · 10:41'], ['Photos', '1'], ['Seen by', 'Ada Okafor, facility manager · 10:45']],
+    note: 'Kemi sees a double tick when the facility team has opened her request. No more “did anyone see my message?”',
   },
   {
-    phase: 'Build', title: 'Purchase order PO-2041', caption: 'Raise a purchase order for the cement needed on site.',
-    rows: [['Supplier', 'Redline Materials'], ['Portland cement', '500 bags'], ['Unit price', naira(9600)], ['Order subtotal', naira(4800000)]],
-    note: 'Issued · Delivery to Palmview Terrace',
+    phase: 'Assign', title: 'Send it to the right person',
+    caption: 'Ada assigns the job to Tunde from Northgate’s own team. A contractor would get it by email instead, no app needed.',
+    rows: () => [['Priority', 'High · due today, 17:00'], ['Asset', 'Canteen power ring'], ['Assigned to', tourState.assigned ? 'Tunde Bello, electrician · 10:48' : 'Not assigned yet'], ['Kemi sees', tourState.assigned ? 'Assigned to Tunde Bello' : 'Seen by facility team']],
+    note: 'Urgent contractor jobs can also be sent on WhatsApp in one tap.',
+    action: () => tourState.assigned ? null : { key: 'assigned', label: 'Assign to Tunde' },
   },
   {
-    phase: 'Build', title: 'Goods received', caption: 'Spot the 80-bag shortfall before approving the invoice.',
-    rows: [['Purchase order', 'PO-2041'], ['Ordered', '500 bags'], ['Received on site', '420 bags'], ['Outstanding', '80 bags']],
-    note: 'Short delivery flagged · 80 bags still due', warning: true,
+    phase: 'Fix', title: 'Fix it, with parts from the store',
+    caption: 'Tunde takes the parts out of the Head Office store against the job and adds photos of the finished work.',
+    rows: [['13 A double socket', '2 · from Head Office store'], ['2.5 mm cable', '3 metres'], ['Photos', '2 before, 2 after'], ['Store left', '2 sockets · below reorder level']],
+    note: 'Stock comes off the moment the update is sent. Low stock is flagged to the storekeeper.',
   },
   {
-    phase: 'Build', title: 'Stock and supplier invoice', caption: 'Update stock and match the invoice to what actually arrived.',
-    rows: [['Stock received', '+420 bags'], ['Original order subtotal', naira(4800000)], ['Matched invoice subtotal', naira(4032000)], ['Value awaiting delivery', naira(768000)]],
-    note: 'Illustrative subtotals before applicable tax and withholding.',
+    phase: 'Confirm', title: 'Done, confirmed and rated',
+    caption: 'Ada confirms the job is done. Kemi gets a prompt to rate it.',
+    rows: () => [['Status', tourState.confirmed ? 'Done · confirmed by Ada 12:05' : 'Awaiting confirmation'], ['Kemi’s rating', tourState.confirmed ? '4 of 5 · “Fixed before lunch.”' : 'Waiting for Done'], ['Time to fix', '1 h 24 min']],
+    note: 'Ratings feed each technician’s and contractor’s scorecard.',
+    action: () => tourState.confirmed ? null : { key: 'confirmed', label: 'Confirm done' },
   },
   {
-    phase: 'Hand over', title: '60 kVA standby generator', caption: 'Give the facility team the equipment record at handover.',
-    rows: [['Asset ID', 'AS-0060'], ['Location', 'Block C · Generator room'], ['Supplier', 'Haven Power Supplies'], ['Installer', 'Terrace Electromech'], ['Purchased', '14 February 2027'], ['Warranty through', '14 February 2030']],
-    note: 'Added to the asset register · Palmview Terrace',
+    phase: 'Restock', title: 'LPO and waybill',
+    caption: 'The store reorders 20 sockets. The waybill shows only 16 arrived.',
+    rows: [['LPO', 'LPO-000415 · Adebola Electricals'], ['Ordered', '20 × 13 A double socket at ₦6,500'], ['Waybill', 'WB-000093 · received by the storekeeper'], ['Received', '16']],
+    note: 'Short delivery flagged · 4 sockets still due.',
+    warning: { ordered: 20, received: 16, unit: 'sockets' },
   },
   {
-    phase: 'Run · Two years later', title: 'Generator not starting, Block C', caption: 'Open a work ticket and use the asset record to find the installer.',
-    rows: [['Ticket ID', 'TK-1042'], ['Priority', 'High'], ['Linked asset', 'AS-0060 · 60 kVA standby generator'], ['Reported', '18 February 2029 · 08:42 WAT'], ['Warranty', 'Active through 14 February 2030']],
-    note: 'The installer is available in the sample asset history.',
-    action: 'assign',
+    phase: 'Pay', title: 'Supplier bill check',
+    caption: 'Adebola bills for all 20. Kivo checks the bill against the LPO and the waybill.',
+    rows: () => [['Billed', tourState.fixed ? `${naira(104000)} · corrected bill` : `${naira(130000)} for 20 sockets`], ['Arrived', `16 sockets · ${naira(104000)}`], ['Result', tourState.fixed ? 'Matches the LPO and waybill · ready to pay' : 'Doesn’t match · can’t be paid']],
+    note: 'A bill must match exactly before anyone can pay it. No overrides, for compliance.',
+    warnRows: () => !tourState.fixed,
+    action: () => tourState.fixed ? null : { key: 'fixed', label: 'Ask Adebola to fix the bill' },
   },
   {
-    phase: 'Run', title: 'Repair history', caption: 'Keep the purchase, handover and repair history together.',
-    rows: [['14 February 2027', 'Generator purchased from Haven Power Supplies'], ['28 February 2027', 'Installed by Terrace Electromech and handed over'], ['18 February 2029', 'Generator fault reported under warranty']],
-    note: 'The repair stays linked to asset AS-0060 and ticket TK-1042.',
-    action: 'complete',
+    phase: 'Bill', title: 'Bill Meridian Bank for the job',
+    caption: 'The client bill builds itself from the job, with Meridian Bank’s markup on parts and a fixed workmanship fee.',
+    rows: [['Parts at cost', naira(16600)], ['Parts with 15% markup', naira(19090)], ['Workmanship, fixed fee', naira(15000)], ['Subtotal', naira(34090)], ['VAT 7.5%', naira(2557)], ['Total to Meridian Bank', naira(36647)], ['You make', naira(17490)]],
+    note: 'If the bank deducts 5% withholding tax, the bill is still marked paid and Kivo tracks the credit note.',
+    end: true,
   },
 ];
 
 let activeStep = 0;
-let assigned = false;
-let completed = false;
 const stepTabs = $$('[data-step]');
 const panel = $('#product-panel');
 const nextButton = $('#journey-next');
 const backButton = $('#journey-back');
 const narrowTour = window.matchMedia('(max-width: 620px)');
 const tourTabs = $('.journey-tabs');
-function updateTourOrientation() {
-  tourTabs.setAttribute('aria-orientation', narrowTour.matches ? 'horizontal' : 'vertical');
-}
+function updateTourOrientation() { tourTabs.setAttribute('aria-orientation', narrowTour.matches ? 'horizontal' : 'vertical'); }
 narrowTour.addEventListener('change', updateTourOrientation);
 updateTourOrientation();
 
 function renderJourney() {
-  const step = palmviewSteps[activeStep];
-  const ticketState = completed ? 'Done' : assigned ? 'Ongoing · Terrace Electromech' : 'Open';
-  const rows = [...step.rows];
-  if (step.action === 'complete' && completed) {
-    rows.push(['Repair recorded', 'Starter relay replaced under warranty']);
-  }
-  if (step.action) rows.push(['Ticket status', ticketState]);
-  const action = step.action === 'assign' && !assigned
-    ? '<button class="journey-button journey-next" data-tour-action="assign">Assign installer </button>'
-    : step.action === 'complete' && !completed
-      ? '<button class="journey-button journey-next" data-tour-action="complete">Log repair and mark done </button>'
-      : '';
+  const step = steps[activeStep];
+  const rows = typeof step.rows === 'function' ? step.rows() : step.rows;
+  const action = step.action ? step.action() : null;
+  const warnRows = step.warnRows ? step.warnRows() : false;
+  const visual = step.warning
+    ? `<div class="delivery-visual" aria-hidden="true"><div><strong>${step.warning.ordered}</strong>Ordered</div><div><strong>${step.warning.received}</strong>Received</div><div><strong>${step.warning.ordered - step.warning.received}</strong>Still due</div></div>`
+    : '';
   panel.innerHTML = `
-    <p class="eyebrow">${step.phase} / Palmview Terrace</p>
+    <p class="eyebrow">${step.phase} / Meridian Bank · WT-0152</p>
     <h3>${step.title}</h3>
     <p class="journey-caption">${step.caption}</p>
-    ${step.warning ? '<div class="delivery-visual" aria-hidden="true"><div><strong>500</strong>Ordered</div><div><strong>420</strong>Received</div><div><strong>80</strong>Still due</div></div>' : ''}
-    <dl class="journey-records${step.meter ? ' budget-stats' : ''}">
+    ${visual}
+    <dl class="journey-records${step.end ? ' bill-records' : ''}${warnRows ? ' records-warning' : ''}">
       ${rows.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}
     </dl>
-    ${step.meter ? '<div class="budget-visual"><div><span>Budget allocation</span><strong>39% used</strong></div><div class="budget-track" aria-hidden="true"><span></span><span></span></div><p><strong>₦293.6m</strong> available for the work ahead.</p></div>' : ''}
-    <p class="journey-note${step.warning ? ' journey-warning' : ''}">${step.note}</p>
-    ${action}
-    ${activeStep === 6 ? '<div class="journey-end"><strong>Want this for your sites?</strong><button class="button button-light" data-join>Join early access </button></div>' : ''}
+    <p class="journey-note${step.warning || warnRows ? ' journey-warning' : ''}">${step.note}</p>
+    ${action ? `<button class="journey-button journey-next" data-tour-action="${action.key}">${action.label} </button>` : ''}
+    ${step.end ? '<div class="journey-end"><strong>Want this for your buildings?</strong><a class="button button-light" href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">Book a demo </a></div>' : ''}
   `;
   panel.setAttribute('aria-labelledby', stepTabs[activeStep].id);
   for (const [index, tab] of stepTabs.entries()) {
@@ -179,12 +315,12 @@ function renderJourney() {
     tab.tabIndex = index === activeStep ? 0 : -1;
   }
   backButton.disabled = activeStep === 0;
-  nextButton.disabled = activeStep === palmviewSteps.length - 1;
-  $('#journey-progress').textContent = `Step ${activeStep + 1} of ${palmviewSteps.length}: ${stepTabs[activeStep].querySelector('.journey-tab-label').textContent}`;
+  nextButton.disabled = activeStep === steps.length - 1;
+  $('#journey-progress').textContent = `Step ${activeStep + 1} of ${steps.length}: ${stepTabs[activeStep].querySelector('.journey-tab-label').textContent}`;
 }
 
 function goToStep(index, focusPanel = false) {
-  activeStep = Math.max(0, Math.min(index, palmviewSteps.length - 1));
+  activeStep = Math.max(0, Math.min(index, steps.length - 1));
   renderJourney();
   if (focusPanel) {
     panel.focus({ preventScroll: true });
@@ -192,52 +328,77 @@ function goToStep(index, focusPanel = false) {
   }
 }
 
-for (const tab of stepTabs) {
-  tab.addEventListener('click', () => goToStep(Number(tab.dataset.step)));
-}
+for (const tab of stepTabs) tab.addEventListener('click', () => goToStep(Number(tab.dataset.step)));
 setupTabKeyboard('[data-step]', tab => goToStep(Number(tab.dataset.step)), true);
 nextButton.addEventListener('click', () => goToStep(activeStep + 1, true));
 backButton.addEventListener('click', () => goToStep(activeStep - 1, true));
 $('#reset-demo').addEventListener('click', () => {
-  assigned = false;
-  completed = false;
+  tourState.assigned = false; tourState.confirmed = false; tourState.fixed = false;
   goToStep(0, true);
 });
-
 panel.addEventListener('click', event => {
   const button = event.target.closest('[data-tour-action]');
   if (!button) return;
-  assigned = true;
-  if (button.dataset.tourAction === 'complete') completed = true;
+  tourState[button.dataset.tourAction] = true;
   renderJourney();
   panel.focus({ preventScroll: true });
 });
 
 let touchStart;
-panel.addEventListener('touchstart', event => {
-  if (event.touches.length === 1) {
-    touchStart = [event.touches[0].clientX, event.touches[0].clientY];
-  }
-}, { passive: true });
+panel.addEventListener('touchstart', event => { if (event.touches.length === 1) touchStart = [event.touches[0].clientX, event.touches[0].clientY]; }, { passive: true });
 panel.addEventListener('touchcancel', () => { touchStart = undefined; });
 panel.addEventListener('touchend', event => {
-  const origin = touchStart;
-  touchStart = undefined;
+  const origin = touchStart; touchStart = undefined;
   if (!origin || !narrowTour.matches) return;
-  const [startX, startY] = origin;
-  const dx = event.changedTouches[0].clientX - startX;
-  const dy = event.changedTouches[0].clientY - startY;
-  if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-    goToStep(activeStep + (dx < 0 ? 1 : -1));
-  }
+  const dx = event.changedTouches[0].clientX - origin[0];
+  const dy = event.changedTouches[0].clientY - origin[1];
+  if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) goToStep(activeStep + (dx < 0 ? 1 : -1));
 });
-
 renderJourney();
 
-
 for (const link of $$('[data-tour-jump]')) {
-  link.addEventListener('click', () => {
-    goToStep(Number(link.dataset.tourJump));
-    panel.focus({ preventScroll: true });
+  link.addEventListener('click', () => { goToStep(Number(link.dataset.tourJump)); panel.focus({ preventScroll: true }); });
+}
+
+
+/* ---------- Early access form → /api/early-access ---------- */
+const LEADS_ENDPOINT = '/api/early-access';
+const joinForm = $('#join-form');
+if (joinForm) {
+  const errorBox = $('#join-error');
+  const submit = $('#join-submit');
+  const showError = (message) => { errorBox.textContent = message; errorBox.hidden = false; };
+  joinForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    errorBox.hidden = true;
+    const required = ['#lead-name', '#lead-email', '#lead-company'].map(id => $(id));
+    let firstBad = null;
+    for (const input of required) {
+      const bad = !input.value.trim() || (input.type === 'email' && !input.validity.valid);
+      input.setAttribute('aria-invalid', String(bad));
+      if (bad && !firstBad) firstBad = input;
+    }
+    if (firstBad) { showError('Please add your name, a valid work email and your company.'); firstBad.focus(); return; }
+    const data = Object.fromEntries(new FormData(joinForm));
+    for (const key of Object.keys(data)) data[key] = String(data[key]).trim();
+    data.intent = 'trial';
+    submit.setAttribute('aria-busy', 'true'); submit.disabled = true; submit.textContent = 'Sending…';
+    try {
+      const response = await fetch(LEADS_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.success) throw new Error(result.message || 'We couldn’t send that just now. Please try again, or WhatsApp us.');
+      $('#join-done-name').textContent = data.fullName.split(/\s+/)[0];
+      $('#join-form-view').hidden = true;
+      $('#join-done').hidden = false;
+      $('#join-done').focus();
+      joinForm.reset();
+    } catch (error) {
+      showError(error.message || 'We couldn’t send that just now. Please try again, or WhatsApp us.');
+    } finally {
+      submit.removeAttribute('aria-busy'); submit.disabled = false; submit.textContent = 'Join early access';
+    }
+  });
+  $('#join-dialog').addEventListener('close', () => {
+    if (!$('#join-done').hidden) { $('#join-done').hidden = true; $('#join-form-view').hidden = false; }
   });
 }
