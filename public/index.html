@@ -21,8 +21,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/kivo-icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="home.css?v=20261113-3">
-  <link rel="stylesheet" href="recraft.css?v=20261127-5">
-  <script src="app.js?v=20261127-5" defer></script>
+  <link rel="stylesheet" href="recraft.css?v=20261127-7">
+  <script src="app.js?v=20261127-7" defer></script>
 </head>
 <body class="kivo-home editorial-home">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -35,17 +35,27 @@
   </nav>
 </header>
 <main id="main">
-  <section class="hero" aria-labelledby="hero-title">
-    <div class="wrap editorial-hero">
-      <p class="hero-category">Facility management software · Launching 1 January 2027</p>
-      <h1 id="hero-title">Every repair, part and bill<br class="wide-break"> on one record.</h1>
-      <div class="hero-bottom-copy">
+  <section class="hero stage" aria-labelledby="hero-title">
+    <div class="wrap stage-grid">
+      <div class="stage-copy">
+        <p class="hero-category">Facility management software · Launching 1 January 2027</p>
+        <h1 id="hero-title">Every repair, part and bill on one record.</h1>
         <p class="hero-description">Staff report a fault from their phone. Your technician or contractor fixes it, parts come out of the store, and a supplier bill is only paid when it matches what arrived.</p>
-        <div class="hero-actions">
-          <a class="button button-light" href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">Book a demo</a>
-          <a class="editorial-link hero-tour" href="#workspace">Explore the product tour</a>
+        <form class="capture" id="hero-capture" novalidate>
+          <label class="visually-hidden" for="capture-email">Work email</label>
+          <input id="capture-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Your work email">
+          <button class="button button-light" type="submit">Join early access</button>
+        </form>
+        <p class="capture-note">Free to join · 20% off your first 6 months · <a href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">or book a demo</a></p>
+      </div>
+      <div class="stage-media">
+        <div class="stage-slab">
+          <img class="stage-screen" src="assets/product/dashboard.webp" alt="Kivo dashboard for Meridian Bank: tickets opened, jobs done on time, average time to seen, tickets that need attention" width="1800" height="962" fetchpriority="high" decoding="async">
+          <img class="stage-phone" src="assets/product/phone-request.webp" alt="A requester's phone showing request WT-0152: seen by the facility team, assigned to Tunde, being fixed" width="585" height="1266" decoding="async">
         </div>
       </div>
+    </div>
+    <div class="wrap">
       <nav class="capability-index" aria-label="Explore Kivo features">
         <ul>
           <li><a href="#requests">Requests</a></li>
@@ -59,17 +69,47 @@
     </div>
   </section>
 
-  <section class="wrap situations-section" aria-labelledby="situations-heading">
-    <div class="situations-intro"><h2 id="situations-heading">Where Kivo helps</h2><p>For facility management companies, estate managers, and the in-house facilities teams of banks, hotels, schools and offices.</p></div>
-    <ul class="situation-list">
-      <li><a href="#product-panel" data-tour-jump="0"><strong>Sockets are sparking in the staff canteen.</strong><span>Staff report it with a photo. The facility team sees it and assigns a technician in minutes.</span></a></li>
-      <li><a href="#product-panel" data-tour-jump="5"><strong>A supplier bills for 20 sockets. 16 arrived.</strong><span>Kivo holds the bill until it matches the LPO and the waybill.</span></a></li>
-      <li><a href="#contractors"><strong>Your contractor won’t download another app.</strong><span>They get the job by email. Their reply goes straight onto the job.</span></a></li>
-    </ul>
-    <figure class="handover-photo">
-      <img src="assets/site-handover.webp" srcset="assets/site-handover-small.webp 640w, assets/site-handover.webp 1200w" sizes="(max-width: 620px) calc(100vw - 36px), (max-width: 1400px) 43vw, 580px" alt="Two facility professionals walk a residential block in a concrete corridor facing a courtyard" width="1200" height="900" decoding="async">
-      <figcaption>Illustration of a facility walkthrough</figcaption>
-    </figure>
+  <section class="chapters" id="how-it-works" aria-labelledby="chapters-heading">
+    <div class="wrap">
+      <div class="chapters-head">
+        <h2 id="chapters-heading">Report it. Fix it. Pay the right amount.</h2>
+        <p>Most facilities work in Nigeria still runs on WhatsApp groups, Excel sheets and paper waybills. Kivo keeps the request, the repair, the parts and the money on the same record.</p>
+      </div>
+      <article class="chapter">
+        <div class="chapter-media chapter-phones">
+          <img src="assets/product/phone-request.webp" alt="Requester view of WT-0152 with each step ticked: sent, seen, assigned, being fixed" width="585" height="1266" loading="lazy" decoding="async">
+          <img src="assets/product/phone-tech.webp" alt="Technician view of the same job with the asset, who assigned it, the due time and a Start job button" width="585" height="1266" loading="lazy" decoding="async">
+        </div>
+        <div class="chapter-copy">
+          <p class="chapter-label">01 · Report and fix</p>
+          <h3>Staff report it. They see it’s been seen.</h3>
+          <p>Kemi sends a photo of sparking sockets in the canteen. Ada sees it, assigns Tunde, and Kemi watches every step on her phone. No more “did anyone see my message?” Technicians work offline and take parts from the store against the job.</p>
+          <a class="chapter-link" href="#product-panel" data-tour-jump="0">Follow the job<svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg></a>
+        </div>
+      </article>
+      <article class="chapter chapter-flip">
+        <div class="chapter-media chapter-screen">
+          <img src="assets/product/supplier-bill.webp" alt="Kivo stopping a supplier bill: Okon billed 2 drums of engine oil and only 1 arrived, ₦48,000 more than delivered" width="1600" height="806" loading="lazy" decoding="async">
+        </div>
+        <div class="chapter-copy">
+          <p class="chapter-label">02 · Settle</p>
+          <h3>A supplier bill is only paid when it matches.</h3>
+          <p>Kivo checks every line against the LPO and the waybill. Okon billed two drums of engine oil and one arrived, so the bill waits until it’s fixed. Client bills carry your markup, fixed-fee workmanship and 7.5% VAT.</p>
+          <a class="chapter-link" href="#product-panel" data-tour-jump="5">See a bill being checked<svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg></a>
+        </div>
+      </article>
+      <article class="chapter">
+        <div class="chapter-media chapter-screen">
+          <img src="assets/product/dashboard-scorecard.webp" alt="Contractor scorecards out of 100 and the open backlog for each Meridian Bank site" width="1400" height="332" loading="lazy" decoding="async">
+        </div>
+        <div class="chapter-copy">
+          <p class="chapter-label">03 · Oversee</p>
+          <h3>Every site and contractor, side by side.</h3>
+          <p>See which branch has the longest backlog and which contractor fixes it first time. Head office gets the whole portfolio; each site manager sees their own.</p>
+          <a class="chapter-link" href="#pricing">See plans for multi-site teams<svg class="arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg></a>
+        </div>
+      </article>
+    </div>
   </section>
 
   <section class="wrap catalogue-section" id="features" aria-labelledby="platform-title">
@@ -84,14 +124,7 @@
     </ul>
   </section>
 
-  <section class="wrap approach-section" id="how-it-works" aria-labelledby="approach-heading">
-    <div><h2 id="approach-heading">Report it. Fix it. Pay the right amount.</h2><p>Most facilities work in Nigeria still runs on WhatsApp groups, Excel sheets and paper waybills. Kivo keeps the request, the repair, the parts and the money on the same record, so nothing is lost and nothing is paid twice.</p></div>
-    <ol class="approach-list">
-      <li><h3>Report</h3><p>Anyone in the building logs a fault with a photo and sees when your team has seen it.</p></li>
-      <li><h3>Fix</h3><p>Assign your technician or a contractor. Parts come out of the store against the job.</p></li>
-      <li><h3>Settle</h3><p>Pay suppliers only for what arrived. Bill your client with markup, fixed-fee workmanship and VAT.</p></li>
-    </ol>
-  </section>
+  
 
   <section class="product-section" id="workspace" aria-labelledby="workspace-heading"><div class="wrap">
     <div class="product-intro"><div><h2 id="workspace-heading">Follow one job, start to finish.</h2></div><p>Kemi reports sparking sockets at Meridian Bank’s head office. Follow it from her phone to the supplier bill and the invoice your team sends the bank.</p></div>
@@ -222,37 +255,82 @@
     <div class="closing-actions"><a class="button button-dark" href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">Book a demo</a><button class="editorial-link" type="button" data-join>Join early access</button></div>
   </section>
 </main>
-<footer class="site-footer"><div class="wrap"><div class="footer-top"><a href="#" class="brand" aria-label="Kivo home"><img src="assets/kivo-complete.svg" alt="" width="104" height="39"></a><p>For the people who keep<br>buildings running.</p><div><a href="mailto:hello@kivo.africa">hello@kivo.africa </a><a href="https://wa.me/2349024256248" target="_blank" rel="noopener noreferrer">WhatsApp +234 902 425 6248</a></div></div><div class="footer-bottom"><span>© 2026 Kivotech Limited (RC 8360347).</span><div><a href="#features">Platform</a><a href="#pricing">Pricing</a><a href="news.html">News</a></div><span>Built in Lagos.</span></div></div></footer>
+<footer class="site-footer kivo-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#main" class="brand" aria-label="Kivo home"><img src="assets/kivo-white.svg" alt="" width="104" height="39"></a>
+        <p>Facility management for the people who keep Nigerian buildings running.</p>
+        <ul class="social-links" aria-label="Kivo on social media">
+          <li><a href="https://www.linkedin.com/company/kivoafrica/" target="_blank" rel="noopener noreferrer" aria-label="Kivo on LinkedIn"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M44.4469 0H3.54375C1.58437 0 0 1.54688 0 3.45938V44.5312C0 46.4437 1.58437 48 3.54375 48H44.4469C46.4062 48 48 46.4438 48 44.5406V3.45938C48 1.54688 46.4062 0 44.4469 0ZM14.2406 40.9031H7.11563V17.9906H14.2406V40.9031ZM10.6781 14.8688C8.39062 14.8688 6.54375 13.0219 6.54375 10.7437C6.54375 8.46562 8.39062 6.61875 10.6781 6.61875C12.9563 6.61875 14.8031 8.46562 14.8031 10.7437C14.8031 13.0125 12.9563 14.8688 10.6781 14.8688ZM40.9031 40.9031H33.7875V29.7656C33.7875 27.1125 33.7406 23.6906 30.0844 23.6906C26.3812 23.6906 25.8187 26.5875 25.8187 29.5781V40.9031H18.7125V17.9906H25.5375V21.1219H25.6312C26.5781 19.3219 28.9031 17.4188 32.3625 17.4188C39.5719 17.4188 40.9031 22.1625 40.9031 28.3313V40.9031Z"/></svg></a></li>
+          <li><a href="https://www.instagram.com/kivo.africa" target="_blank" rel="noopener noreferrer" aria-label="Kivo on Instagram"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4.32187C30.4125 4.32187 31.1719 4.35 33.6938 4.4625C36.0375 4.56562 37.3031 4.95938 38.1469 5.2875C39.2625 5.71875 40.0688 6.24375 40.9031 7.07812C41.7469 7.92188 42.2625 8.71875 42.6938 9.83438C43.0219 10.6781 43.4156 11.9531 43.5188 14.2875C43.6313 16.8187 43.6594 17.5781 43.6594 23.9813C43.6594 30.3938 43.6313 31.1531 43.5188 33.675C43.4156 36.0188 43.0219 37.2844 42.6938 38.1281C42.2625 39.2438 41.7375 40.05 40.9031 40.8844C40.0594 41.7281 39.2625 42.2438 38.1469 42.675C37.3031 43.0031 36.0281 43.3969 33.6938 43.5C31.1625 43.6125 30.4031 43.6406 24 43.6406C17.5875 43.6406 16.8281 43.6125 14.3063 43.5C11.9625 43.3969 10.6969 43.0031 9.85313 42.675C8.7375 42.2438 7.93125 41.7188 7.09688 40.8844C6.25313 40.0406 5.7375 39.2438 5.30625 38.1281C4.97813 37.2844 4.58438 36.0094 4.48125 33.675C4.36875 31.1438 4.34063 30.3844 4.34063 23.9813C4.34063 17.5688 4.36875 16.8094 4.48125 14.2875C4.58438 11.9437 4.97813 10.6781 5.30625 9.83438C5.7375 8.71875 6.2625 7.9125 7.09688 7.07812C7.94063 6.23438 8.7375 5.71875 9.85313 5.2875C10.6969 4.95938 11.9719 4.56562 14.3063 4.4625C16.8281 4.35 17.5875 4.32187 24 4.32187ZM24 0C17.4844 0 16.6688 0.028125 14.1094 0.140625C11.5594 0.253125 9.80625 0.665625 8.2875 1.25625C6.70312 1.875 5.3625 2.69062 4.03125 4.03125C2.69063 5.3625 1.875 6.70313 1.25625 8.27813C0.665625 9.80625 0.253125 11.55 0.140625 14.1C0.028125 16.6687 0 17.4844 0 24C0 30.5156 0.028125 31.3312 0.140625 33.8906C0.253125 36.4406 0.665625 38.1938 1.25625 39.7125C1.875 41.2969 2.69063 42.6375 4.03125 43.9688C5.3625 45.3 6.70313 46.125 8.27813 46.7344C9.80625 47.325 11.55 47.7375 14.1 47.85C16.6594 47.9625 17.475 47.9906 23.9906 47.9906C30.5063 47.9906 31.3219 47.9625 33.8813 47.85C36.4313 47.7375 38.1844 47.325 39.7031 46.7344C41.2781 46.125 42.6188 45.3 43.95 43.9688C45.2812 42.6375 46.1063 41.2969 46.7156 39.7219C47.3063 38.1938 47.7188 36.45 47.8313 33.9C47.9438 31.3406 47.9719 30.525 47.9719 24.0094C47.9719 17.4938 47.9438 16.6781 47.8313 14.1188C47.7188 11.5688 47.3063 9.81563 46.7156 8.29688C46.125 6.70312 45.3094 5.3625 43.9688 4.03125C42.6375 2.7 41.2969 1.875 39.7219 1.26562C38.1938 0.675 36.45 0.2625 33.9 0.15C31.3313 0.028125 30.5156 0 24 0Z"/><path d="M24 11.6719C17.1938 11.6719 11.6719 17.1938 11.6719 24C11.6719 30.8062 17.1938 36.3281 24 36.3281C30.8062 36.3281 36.3281 30.8062 36.3281 24C36.3281 17.1938 30.8062 11.6719 24 11.6719ZM24 31.9969C19.5844 31.9969 16.0031 28.4156 16.0031 24C16.0031 19.5844 19.5844 16.0031 24 16.0031C28.4156 16.0031 31.9969 19.5844 31.9969 24C31.9969 28.4156 28.4156 31.9969 24 31.9969Z"/><path d="M39.6937 11.1843C39.6937 12.778 38.4 14.0624 36.8156 14.0624C35.2219 14.0624 33.9375 12.7687 33.9375 11.1843C33.9375 9.59053 35.2313 8.30615 36.8156 8.30615C38.4 8.30615 39.6937 9.5999 39.6937 11.1843Z"/></svg></a></li>
+          <li><a href="https://x.com/get_kivo" target="_blank" rel="noopener noreferrer" aria-label="Kivo on X"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M36.6526 3.8078H43.3995L28.6594 20.6548L46 43.5797H32.4225L21.7881 29.6759L9.61989 43.5797H2.86886L18.6349 25.56L2 3.8078H15.9222L25.5348 16.5165L36.6526 3.8078ZM34.2846 39.5414H38.0232L13.8908 7.63406H9.87892L34.2846 39.5414Z"/></svg></a></li>
+        </ul>
+      </div>
+      <nav class="footer-col" aria-label="Product"><h2>Product</h2><a href="#features">Platform</a><a href="#workspace">Product tour</a><a href="#pricing">Pricing</a><a href="#questions">FAQs</a></nav>
+      <nav class="footer-col" aria-label="Company"><h2>Company</h2><a href="news.html">News</a><a href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">Book a demo</a><button type="button" data-join>Join early access</button></nav>
+      <div class="footer-col"><h2>Talk to us</h2><a href="mailto:hello@kivo.africa">hello@kivo.africa</a><a href="https://wa.me/2349024256248" target="_blank" rel="noopener noreferrer">WhatsApp +234 902 425 6248</a><span>Lekki, Lagos</span></div>
+    </div>
+    <div class="footer-legal"><span>© 2026 Kivotech Limited · RC 8360347 · Lekki, Lagos, Nigeria</span><nav aria-label="Legal"><a href="privacy.html">Privacy notice</a><a href="cookies.html">Cookie notice</a><a href="terms.html">Terms of use</a></nav></div>
+  </div>
+</footer>
 
 <a class="wa-float" href="https://wa.me/2349024256248?text=Hi%20Kivo%2C%20I%27d%20like%20to%20know%20more." target="_blank" rel="noopener noreferrer" aria-label="Chat with Kivo on WhatsApp"><img class="wa-icon" src="assets/whatsapp.png" alt="" width="20" height="20"><span>WhatsApp</span></a>
 
-<dialog id="join-dialog" class="dialog" aria-labelledby="join-title">
-  <button class="dialog-close" aria-label="Close early access" data-close>×</button>
-  <div id="join-form-view">
-    <p class="eyebrow">LAUNCHING 1 JANUARY 2027</p>
-    <h2 id="join-title">Join early access</h2>
-    <p class="dialog-intro">20% off your first six months, free setup from your Excel sheets and a direct line to the founders. Free to join.</p>
-    <!-- Posts to /api/early-access: Brevo list "Website – early access" + email to the team. -->
-    <form id="join-form" class="join-form" novalidate>
-      <div class="join-field"><label for="lead-name">Full name</label><input id="lead-name" name="fullName" type="text" autocomplete="name" required placeholder="Adaeze Nwosu"></div>
-      <div class="join-field"><label for="lead-email">Work email</label><input id="lead-email" name="email" type="email" autocomplete="email" required placeholder="adaeze@company.com"></div>
-      <div class="join-field"><label for="lead-company">Company or estate</label><input id="lead-company" name="companyName" type="text" autocomplete="organization" required placeholder="Lekki Gardens Estate"></div>
-      <div class="join-row">
-        <div class="join-field"><label for="lead-sites">Sites</label><select id="lead-sites" name="sitesCount"><option value="1-3">1 to 3</option><option value="4-10" selected>4 to 10</option><option value="11-25">11 to 25</option><option value="25+">More than 25</option></select></div>
-        <div class="join-field"><label for="lead-module">Most interested in</label><select id="lead-module" name="primaryModule"><option>Requests and tickets</option><option>Technicians on mobile</option><option>Contractors and vendors</option><option>Stores and diesel</option><option>LPOs and waybills</option><option>Billing and invoices</option><option selected>Full facility platform</option></select></div>
+<dialog id="join-dialog" class="dialog join-dialog" aria-labelledby="join-title">
+  <div class="join-shell">
+    <aside class="join-aside">
+      <p class="join-kicker">Founding members</p>
+      <p class="join-aside-title">Launching 1 January 2027</p>
+      <ul class="join-benefits">
+        <li><strong>20% off</strong> your first six months</li>
+        <li><strong>Free setup</strong> from your Excel sheets</li>
+        <li><strong>A direct line</strong> to the founders on WhatsApp</li>
+        <li><strong>A say</strong> in what we build next</li>
+      </ul>
+      <img class="join-aside-shot" src="assets/product/phone-request.webp" alt="" width="585" height="1266" loading="lazy" decoding="async">
+    </aside>
+    <div class="join-main">
+      <button class="dialog-close" type="button" aria-label="Close" data-close>×</button>
+      <div id="join-form-view">
+        <p class="join-progress" id="join-progress">Step 1 of 2 · About you</p>
+        <div class="join-progress-bar" aria-hidden="true"><span id="join-progress-fill"></span></div>
+        <h2 id="join-title">Join early access</h2>
+        <form id="join-form" class="join-form" novalidate>
+          <fieldset class="join-step" data-step="1">
+            <legend class="visually-hidden">About you</legend>
+            <div class="join-field"><label for="lead-email">Work email</label><input id="lead-email" name="email" type="email" autocomplete="email" inputmode="email" required></div>
+            <div class="join-row">
+              <div class="join-field"><label for="lead-name">Full name</label><input id="lead-name" name="fullName" type="text" autocomplete="name" required></div>
+              <div class="join-field"><label for="lead-company">Company or estate</label><input id="lead-company" name="companyName" type="text" autocomplete="organization" required></div>
+            </div>
+            <fieldset class="join-chips"><legend>Your role</legend><div class="chip-group"><label class="chip"><input type="radio" name="role" value="Facility manager"><span>Facility manager</span></label><label class="chip"><input type="radio" name="role" value="FM company"><span>I run an FM company</span></label><label class="chip"><input type="radio" name="role" value="Estate or property manager"><span>Estate or property manager</span></label><label class="chip"><input type="radio" name="role" value="Procurement or finance"><span>Procurement or finance</span></label><label class="chip"><input type="radio" name="role" value="Other"><span>Something else</span></label></div></fieldset>
+          </fieldset>
+          <fieldset class="join-step" data-step="2" hidden>
+            <legend class="visually-hidden">Your buildings</legend>
+            <fieldset class="join-chips"><legend>What do you look after?</legend><div class="chip-group"><label class="chip"><input type="radio" name="buildingType" value="Offices or bank branches"><span>Offices or branches</span></label><label class="chip"><input type="radio" name="buildingType" value="Estate or residential"><span>Estates or residential</span></label><label class="chip"><input type="radio" name="buildingType" value="Hotel"><span>Hotels</span></label><label class="chip"><input type="radio" name="buildingType" value="Hospital or school"><span>Hospitals or schools</span></label><label class="chip"><input type="radio" name="buildingType" value="FM company clients"><span>Client sites we manage</span></label></div></fieldset>
+            <fieldset class="join-chips"><legend>How many sites?</legend><div class="chip-group"><label class="chip"><input type="radio" name="sitesCount" value="1-3"><span>1 to 3</span></label><label class="chip"><input type="radio" name="sitesCount" value="4-10"><span>4 to 10</span></label><label class="chip"><input type="radio" name="sitesCount" value="11-25"><span>11 to 25</span></label><label class="chip"><input type="radio" name="sitesCount" value="25+"><span>More than 25</span></label></div></fieldset>
+            <fieldset class="join-chips"><legend>Most interested in <span>pick any</span></legend><div class="chip-group"><label class="chip"><input type="checkbox" name="interests" value="Requests and tickets"><span>Requests and tickets</span></label><label class="chip"><input type="checkbox" name="interests" value="Technicians on mobile"><span>Technicians on mobile</span></label><label class="chip"><input type="checkbox" name="interests" value="Contractors and vendors"><span>Contractors</span></label><label class="chip"><input type="checkbox" name="interests" value="Stores and diesel"><span>Stores and diesel</span></label><label class="chip"><input type="checkbox" name="interests" value="LPOs and waybills"><span>LPOs and waybills</span></label><label class="chip"><input type="checkbox" name="interests" value="Billing and invoices"><span>Billing</span></label></div></fieldset>
+            <div class="join-field"><label for="lead-whatsapp">WhatsApp number <span>optional</span></label><input id="lead-whatsapp" name="whatsapp" type="tel" autocomplete="tel" inputmode="tel" placeholder="0803 000 0000"></div>
+          </fieldset>
+          <div class="join-trap" aria-hidden="true"><label for="lead-website">Leave this empty</label><input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+          <p class="join-error" id="join-error" role="alert" hidden></p>
+          <div class="join-actions">
+            <button class="join-back" type="button" id="join-back" hidden>Back</button>
+            <button class="button button-light join-submit" type="submit" id="join-submit">Continue</button>
+          </div>
+          <label class="join-consent"><input type="checkbox" name="marketing" value="yes"><span>Send me product updates and launch news. Optional, and you can unsubscribe at any time.</span></label>
+          <p class="join-fine">Free to join. We use your details to set up early access, as explained in our <a href="privacy.html" target="_blank">privacy notice</a>.</p>
+        </form>
       </div>
-      <div class="join-trap" aria-hidden="true"><label for="lead-website">Leave this empty</label><input id="lead-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-      <p class="join-error" id="join-error" role="alert" hidden></p>
-      <button class="button button-light join-submit" type="submit" id="join-submit">Join early access</button>
-    </form>
-    <p class="join-alt"><a href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">Book a demo instead</a><span aria-hidden="true">·</span><a class="wa-link" href="https://wa.me/2349024256248?text=Hi%20Kivo%2C%20I%27d%20like%20to%20join%20early%20access." target="_blank" rel="noopener noreferrer"><img class="wa-icon" src="assets/whatsapp.png" alt="" width="20" height="20">WhatsApp us</a></p>
-  </div>
-  <div id="join-done" class="join-done" hidden tabindex="-1">
-    <p class="eyebrow">YOU’RE ON THE LIST</p>
-    <h2>Thank you, <span id="join-done-name">there</span>.</h2>
-    <p class="dialog-intro">We’ll be in touch before launch to set up your first site. Founding member pricing is held for you.</p>
-    <div class="dialog-actions"><a class="button button-dark" href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">Book a demo now</a></div>
-    <p class="official-join"><a class="wa-link" href="https://wa.me/2349024256248" target="_blank" rel="noopener noreferrer"><img class="wa-icon" src="assets/whatsapp.png" alt="" width="20" height="20">Chat with the founders on WhatsApp</a></p>
+      <div id="join-done" class="join-done" hidden tabindex="-1">
+        <p class="join-progress">You’re on the list</p>
+        <h2>Thank you, <span id="join-done-name">there</span>.</h2>
+        <p class="join-done-copy">We’ll be in touch before launch to set up your first site. Your founding member price is held for you.</p>
+        <a class="button button-dark" href="https://zoho183.zohobookings.eu/273883000000035071" target="_blank" rel="noopener noreferrer">Book a demo now</a>
+        <p class="official-join"><a class="wa-link" href="https://wa.me/2349024256248" target="_blank" rel="noopener noreferrer"><img class="wa-icon" src="assets/whatsapp.png" alt="" width="20" height="20">Chat with the founders on WhatsApp</a></p>
+      </div>
+    </div>
   </div>
 </dialog>
 

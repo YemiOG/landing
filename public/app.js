@@ -49,10 +49,12 @@ document.addEventListener('click', event => { if (!event.target.closest('.nav'))
 document.addEventListener('click', event => {
   if (!event.target.closest('[data-join]')) return;
   closeMenu();
-  $('#join-dialog').showModal();
+  if (window.openJoin) window.openJoin(($('#capture-email') && $('#capture-email').value.trim()) || '');
+  else $('#join-dialog').showModal();
 });
-if (new URLSearchParams(window.location.search).get('join') === '1') $('#join-dialog').showModal();
+if (new URLSearchParams(window.location.search).get('join') === '1') window.addEventListener('load', () => (window.openJoin ? window.openJoin() : $('#join-dialog').showModal()));
 
+if (document.getElementById('price-panel')) {
 /* ---------- Pricing ---------- */
 // Agreed price list, 23 November 2026. Monthly rates in naira, before VAT.
 const FOUNDING = { label: 'As a founding member', detail: '20% off your first 6 months · sign by 31 March 2027', factor: 0.8 };
@@ -224,6 +226,9 @@ for (const [id, delta] of [['decrease', -1], ['increase', 1]]) {
 }
 changePlan('business');
 
+}
+
+if (document.getElementById('product-panel')) {
 /* ---------- Product tour: one job at Meridian Bank ---------- */
 // Figures: parts at cost ₦16,600, 15% markup for this client, fixed-fee workmanship ₦15,000.
 const tourState = { assigned: false, confirmed: false, fixed: false };
@@ -361,28 +366,79 @@ for (const link of $$('[data-tour-jump]')) {
 }
 
 
-/* ---------- Early access form → /api/early-access ---------- */
+}
+
+/* ---------- Early access: hero capture + two-step form → /api/early-access ---------- */
 const LEADS_ENDPOINT = '/api/early-access';
+const joinDialog = $('#join-dialog');
 const joinForm = $('#join-form');
-if (joinForm) {
+if (joinForm && joinDialog) {
+  const steps = $$('.join-step', joinForm);
   const errorBox = $('#join-error');
   const submit = $('#join-submit');
-  const showError = (message) => { errorBox.textContent = message; errorBox.hidden = false; };
+  const back = $('#join-back');
+  const progress = $('#join-progress');
+  const fill = $('#join-progress-fill');
+  const labels = ['About you', 'Your buildings'];
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  let step = 1;
+
+  const showError = (message, field) => {
+    errorBox.textContent = message; errorBox.hidden = !message;
+    if (field) field.focus();
+  };
+  const setStep = (next) => {
+    step = next;
+    steps.forEach(fieldset => { fieldset.hidden = Number(fieldset.dataset.step) !== step; });
+    progress.textContent = `Step ${step} of 2 · ${labels[step - 1]}`;
+    fill.style.width = step === 1 ? '50%' : '100%';
+    back.hidden = step === 1;
+    submit.textContent = step === 1 ? 'Continue' : 'Join early access';
+    showError('');
+  };
+  const validateStep = () => {
+    if (step === 1) {
+      const email = $('#lead-email'), name = $('#lead-name'), company = $('#lead-company');
+      const checks = [[email, EMAIL.test(email.value.trim()), 'Please enter a valid work email.'], [name, name.value.trim().length > 1, 'Please add your full name.'], [company, company.value.trim().length > 1, 'Please add your company or estate.']];
+      for (const [input, ok] of checks) input.setAttribute('aria-invalid', String(!ok));
+      const failed = checks.find(([, ok]) => !ok);
+      if (failed) { showError(failed[2], failed[0]); return false; }
+      return true;
+    }
+    if (!joinForm.querySelector('input[name="buildingType"]:checked')) { showError('Tell us what you look after.', joinForm.querySelector('input[name="buildingType"]')); return false; }
+    if (!joinForm.querySelector('input[name="sitesCount"]:checked')) { showError('Pick roughly how many sites.', joinForm.querySelector('input[name="sitesCount"]')); return false; }
+    return true;
+  };
+  const resetDialog = () => {
+    if (!$('#join-done').hidden) { joinForm.reset(); $('#join-done').hidden = true; $('#join-form-view').hidden = false; }
+    setStep(1);
+  };
+  window.openJoin = (email = '') => {
+    resetDialog();
+    if (email) $('#lead-email').value = email;
+    if (!joinDialog.open) joinDialog.showModal();
+    (email ? $('#lead-name') : $('#lead-email')).focus();
+  };
+
+  back.addEventListener('click', () => { setStep(1); $('#lead-name').focus(); });
   joinForm.addEventListener('submit', async event => {
     event.preventDefault();
-    errorBox.hidden = true;
-    const required = ['#lead-name', '#lead-email', '#lead-company'].map(id => $(id));
-    let firstBad = null;
-    for (const input of required) {
-      const bad = !input.value.trim() || (input.type === 'email' && !input.validity.valid);
-      input.setAttribute('aria-invalid', String(bad));
-      if (bad && !firstBad) firstBad = input;
-    }
-    if (firstBad) { showError('Please add your name, a valid work email and your company.'); firstBad.focus(); return; }
-    const data = Object.fromEntries(new FormData(joinForm));
-    for (const key of Object.keys(data)) data[key] = String(data[key]).trim();
-    data.intent = 'trial';
-    submit.setAttribute('aria-busy', 'true'); submit.disabled = true; submit.textContent = 'Sending…';
+    if (!validateStep()) return;
+    if (step === 1) { setStep(2); joinForm.querySelector('input[name="buildingType"]').focus(); return; }
+    const formData = new FormData(joinForm);
+    const data = {
+      email: String(formData.get('email') || '').trim(),
+      fullName: String(formData.get('fullName') || '').trim(),
+      companyName: String(formData.get('companyName') || '').trim(),
+      role: String(formData.get('role') || ''),
+      buildingType: String(formData.get('buildingType') || ''),
+      sitesCount: String(formData.get('sitesCount') || ''),
+      primaryModule: formData.getAll('interests').join(', ') || 'Full facility platform',
+      whatsapp: String(formData.get('whatsapp') || '').trim(),
+      website: String(formData.get('website') || ''),
+      marketing: formData.get('marketing') === 'yes',
+    };
+    submit.disabled = true; back.disabled = true; submit.setAttribute('aria-busy', 'true'); submit.textContent = 'Sending…';
     try {
       const response = await fetch(LEADS_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
       const result = await response.json().catch(() => ({}));
@@ -391,14 +447,20 @@ if (joinForm) {
       $('#join-form-view').hidden = true;
       $('#join-done').hidden = false;
       $('#join-done').focus();
-      joinForm.reset();
     } catch (error) {
-      showError(error.message || 'We couldn’t send that just now. Please try again, or WhatsApp us.');
+      const offline = error instanceof TypeError;
+      showError(offline || !error.message ? 'We couldn’t reach Kivo just now. Check your connection and try again, or WhatsApp us.' : error.message);
+      submit.textContent = 'Join early access';
     } finally {
-      submit.removeAttribute('aria-busy'); submit.disabled = false; submit.textContent = 'Join early access';
+      submit.disabled = false; back.disabled = false; submit.removeAttribute('aria-busy');
     }
   });
-  $('#join-dialog').addEventListener('close', () => {
-    if (!$('#join-done').hidden) { $('#join-done').hidden = true; $('#join-form-view').hidden = false; }
+  joinDialog.addEventListener('close', () => { if (!$('#join-done').hidden) resetDialog(); });
+
+  const capture = $('#hero-capture');
+  if (capture) capture.addEventListener('submit', event => {
+    event.preventDefault();
+    window.openJoin($('#capture-email').value.trim());
   });
+  setStep(1);
 }

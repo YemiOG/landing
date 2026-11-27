@@ -35,7 +35,11 @@ module.exports = async (req, res) => {
     email: clean(body.email, 160).toLowerCase(),
     companyName: clean(body.companyName, 160),
     sitesCount: clean(body.sitesCount, 20),
-    primaryModule: clean(body.primaryModule, 60),
+    primaryModule: clean(body.primaryModule, 200),
+    role: clean(body.role, 60),
+    buildingType: clean(body.buildingType, 60),
+    whatsapp: clean(body.whatsapp, 24).replace(/[^\d+ ]/g, ''),
+    marketing: body.marketing === true,
     intent: 'trial',
   };
   if (!lead.fullName || !lead.companyName || !EMAIL.test(lead.email)) {
@@ -44,7 +48,7 @@ module.exports = async (req, res) => {
 
   try {
     if (!process.env.BREVO_API_KEY) {
-      const forward = await fetch(FALLBACK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(lead) });
+      const forward = await fetch(FALLBACK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ fullName: lead.fullName, email: lead.email, companyName: lead.companyName, sitesCount: lead.sitesCount, primaryModule: lead.primaryModule.slice(0, 60), intent: 'trial' }) });
       const result = await forward.json().catch(() => ({}));
       return res.status(forward.ok && result.success ? 200 : 502).json(forward.ok && result.success ? { success: true } : { success: false, message: 'We couldn’t send that just now. Please try again, or WhatsApp us.' });
     }
@@ -52,12 +56,12 @@ module.exports = async (req, res) => {
     const [first, ...rest] = lead.fullName.split(/\s+/);
     await brevo('/contacts', {
       email: lead.email,
-      attributes: { FIRSTNAME: first, LASTNAME: rest.join(' '), COMPANY: lead.companyName },
+      attributes: { FIRSTNAME: first, LASTNAME: rest.join(' '), COMPANY: lead.companyName, OPT_IN: lead.marketing, ...(lead.role ? { JOB_TITLE: lead.role } : {}) },
       listIds: [LIST_ID],
       updateEnabled: true,
     });
 
-    const rows = [['Name', lead.fullName], ['Email', lead.email], ['Company or estate', lead.companyName], ['Sites', lead.sitesCount || '—'], ['Most interested in', lead.primaryModule || '—']];
+    const rows = [['Name', lead.fullName], ['Email', lead.email], ['WhatsApp', lead.whatsapp || '—'], ['Company or estate', lead.companyName], ['Role', lead.role || '—'], ['Looks after', lead.buildingType || '—'], ['Sites', lead.sitesCount || '—'], ['Most interested in', lead.primaryModule || '—'], ['Product updates', lead.marketing ? 'Yes, consented' : 'No']];
     try {
       await brevo('/smtp/email', {
         sender: SENDER,
